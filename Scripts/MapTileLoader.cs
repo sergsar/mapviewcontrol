@@ -1,15 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿namespace MapViewScripts
+{
+    public class MapTileLoader
+    {
+        public void UpdateTile(MapTile tile)
+        {
 
-public class MapTileLoader : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+        }
+    }
 }

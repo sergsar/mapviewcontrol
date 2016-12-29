@@ -6,7 +6,10 @@ namespace MapViewScripts
     public class MapTile : MonoBehaviour
     {
         private float scale;
-        private Action loadDelegate = () => { };
+        private PixelLocation location;
+        private TileLoaderCallback tileLoaderCallback = () => { };
+
+        public TileLoaderCallback TileLoaderCallback { set { tileLoaderCallback = value; } }
 
         private void OnDestroy() //cleanup memory
         {
@@ -24,8 +27,9 @@ namespace MapViewScripts
             return result;
         }
 
-        public void Construct(float scale)
+        public void Construct(float scale, PixelLocation location)
         {
+            this.location = location;
             this.scale = scale;
             GetComponent<Renderer>().sharedMaterial = Instantiate<Material>(GetComponent<Renderer>().sharedMaterial);
         }
@@ -41,7 +45,7 @@ namespace MapViewScripts
 
             if(localPosition != transform.localPosition)
             {
-                loadDelegate();
+                tileLoaderCallback();
             }
 
             transform.localPosition = localPosition;

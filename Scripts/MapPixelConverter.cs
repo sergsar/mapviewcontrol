@@ -32,14 +32,19 @@ namespace MapViewScripts
             return (Mathf.PI / 2f - 2f * Mathf.Atan(Mathf.Exp((Mathf.Round(z) - GOOGLEOFFSET) / GOOGLEOFFSET_RADIUS))) * 180f / Mathf.PI;
         }
 
-        public float adjustLonByPixels(float lon, int delta, int zoom)
+        public float AdjustLonByPixels(float lon, int delta, int zoom)
         {
             return XToLon(LonToX(lon) + (delta << (21 - zoom)));
         }
 
-        public float adjustLatByPixels(float lat, int delta, int zoom)
+        public float AdjustLatByPixels(float lat, int delta, int zoom)
         {
             return ZToLat(LatToZ(lat) + (delta << (21 - zoom)));
+        }
+
+        public float GetZoomMultiplier(int zoomLevel)
+        {
+            return (GOOGLEOFFSET / Mathf.Pow(2F, zoomLevel)) / 256F;
         }
     }
 }

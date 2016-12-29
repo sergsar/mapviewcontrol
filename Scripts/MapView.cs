@@ -8,21 +8,29 @@ namespace MapViewScripts
         new private Collider collider;
 
         private List<MapLevel> mapLevels = new List<MapLevel>();
+        private int tileResolution = 350;
         private int cut = 3;
-
         private float latitude = 55.75275F;
         private float longitude = 37.62074F;
+        private MapLocation mapLocation = new MapLocation() { Longitude = 37.62074F, Latitude = 55.75275F };
         private int zoomLevel = 11;
 
         [SerializeField]
-        private Object tileObject;
+        private Object tileRefObject;
 
         private void Start()
         {
-            var mapLevel = new GameObject("MapLevel").AddComponent<MapLevel>();
+            var mapTileLoader = new MapTileLoader();
+
+            var converter = new MapPixelConverter();
+            var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
+            var mapContext = new MapContext(cut, tileResolution);
+            var mapLevelFactory = new MapLevelFactory(mapContext, mapTileLoader, tileRefObject);
+
+            var mapLevel = mapLevelFactory.GetMapLevel();
             mapLevel.gameObject.SetParent(gameObject);
             mapLevel.transform.localPosition = Vector3.zero;
-            mapLevel.Construct(tileObject, cut);
+            mapLevel.Construct(pixelLocation, zoomLevel);
             mapLevels.Add(mapLevel);
 
             collider = GetComponent<Collider>();
