@@ -20,7 +20,6 @@ namespace MapViewScripts
             if (Mathf.Abs(value) > (1F + scale) * 0.5F)
             {
                 result = (value - 1F * Mathf.Sign(value));
-                loadDelegate();
             }
             return result;
         }
@@ -39,6 +38,11 @@ namespace MapViewScripts
 
             localPosition.x = Limit(localPosition.x);
             localPosition.z = Limit(localPosition.z);
+
+            if(localPosition != transform.localPosition)
+            {
+                loadDelegate();
+            }
 
             transform.localPosition = localPosition;
         }
