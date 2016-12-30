@@ -8,8 +8,10 @@ namespace MapViewScripts
         private float scale;
         private PixelLocation location;
         private TileLoaderCallback tileLoaderCallback = () => { };
+        private MapLevelContext mapLevelContext;
 
         public TileLoaderCallback TileLoaderCallback { set { tileLoaderCallback = value; } }
+        public MapLevelContext MapLevelContext { set { mapLevelContext = value; } }
 
         private void OnDestroy() //cleanup memory
         {

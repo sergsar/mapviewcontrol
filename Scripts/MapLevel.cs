@@ -9,11 +9,11 @@ namespace MapViewScripts
     {
         private List<MapTile> tiles = new List<MapTile>();
         private MapTileLoader mapTileLoader;
-        private UnityEngine.Object tileObject;
+        private UnityEngine.Object tileRefObject;
         private MapContext mapContext;
 
         public MapTileLoader MapTileLoader { set { mapTileLoader = value; } }
-        public UnityEngine.Object TileRefObject { set { tileObject = value; } }
+        public UnityEngine.Object TileRefObject { set { tileRefObject = value; } }
 
         public MapContext MapContext { set { mapContext = value; } }
 
@@ -36,7 +36,7 @@ namespace MapViewScripts
                 for (var z = 0; z < cut; ++z)
                 {
                     var location = new PixelLocation() { X = locationPlace(initLocation.X, x), Z = locationPlace(initLocation.Z, z) };
-                    var tile = (GameObject)Instantiate(tileObject);
+                    var tile = (GameObject)Instantiate(tileRefObject);
                     tile.SetParent(gameObject);
                     tile.transform.localPosition = new Vector3(place(x), 0F, place(z));
                     tile.transform.localScale = Vector3.one * scale;
