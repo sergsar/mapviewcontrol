@@ -20,12 +20,12 @@ namespace MapViewScripts
 
         private void Start()
         {
-            var mapTileLoader = new MapTileLoader();
+            var mapTileUpdater = new MapTileUpdater();
 
             var converter = new MapPixelConverter();
             var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
             var mapContext = new MapContext(cut, tileResolution);
-            var mapLevelFactory = new MapLevelFactory(mapContext, mapTileLoader, tileRefObject);
+            var mapLevelFactory = new MapLevelFactory(mapContext, mapTileUpdater, tileRefObject);
 
             var mapLevel = mapLevelFactory.GetMapLevel();
             mapLevel.gameObject.SetParent(gameObject);

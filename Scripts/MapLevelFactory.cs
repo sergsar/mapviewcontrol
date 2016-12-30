@@ -6,8 +6,8 @@ namespace MapViewScripts
     {
         private UnityEngine.Object tileRefObject;
         private MapContext mapContext;
-        private MapTileLoader mapTileLoader;
-        public MapLevelFactory(MapContext mapContext, MapTileLoader mapTileLoader, Object tileRefObject)
+        private MapTileUpdater mapTileLoader;
+        public MapLevelFactory(MapContext mapContext, MapTileUpdater mapTileLoader, Object tileRefObject)
         {
             this.tileRefObject = tileRefObject;
             this.mapContext = mapContext;

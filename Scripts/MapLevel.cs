@@ -8,11 +8,11 @@ namespace MapViewScripts
     public class MapLevel : MonoBehaviour
     {
         private List<MapTile> tiles = new List<MapTile>();
-        private MapTileLoader mapTileLoader;
+        private MapTileUpdater mapTileUpdater;
         private UnityEngine.Object tileRefObject;
         private MapContext mapContext;
 
-        public MapTileLoader MapTileLoader { set { mapTileLoader = value; } }
+        public MapTileUpdater MapTileLoader { set { mapTileUpdater = value; } }
         public UnityEngine.Object TileRefObject { set { tileRefObject = value; } }
 
         public MapContext MapContext { set { mapContext = value; } }
@@ -27,22 +27,24 @@ namespace MapViewScripts
             var tileStep = mapContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
             var cut = mapContext.Cut;
             var levelStep = tileStep * cut;
-            var scale = 1F / cut;
-            Func<int, float> place = (index) => (scale - 1F) * 0.5F + scale * index;
+            var tileScale = 1F / cut;
+            Func<int, float> place = (index) => (tileScale - 1F) * 0.5F + tileScale * index;
             Func<int, int, int> locationPlace = (center, index) => (int)(center - (levelStep + tileStep) * 0.5F + tileStep * index);
+            var mapLevelContext = new MapLevelContext(zoomLevel, levelStep, tileScale);
+            var instanciateCallback = new InstanciateCallback(() => Instantiate(tileRefObject));
+            var mapTileFactory = new MapTileFactory(instanciateCallback, mapLevelContext);
 
             for (var x = 0; x < cut; ++x)
             {
                 for (var z = 0; z < cut; ++z)
                 {
                     var location = new PixelLocation() { X = locationPlace(initLocation.X, x), Z = locationPlace(initLocation.Z, z) };
-                    var tile = (GameObject)Instantiate(tileRefObject);
-                    tile.SetParent(gameObject);
+                    var tile = mapTileFactory.GetMapTile();
+                    tile.gameObject.SetParent(gameObject);
                     tile.transform.localPosition = new Vector3(place(x), 0F, place(z));
-                    tile.transform.localScale = Vector3.one * scale;
-                    var tileComponent = tile.AddComponent<MapTile>();
-                    tileComponent.Construct(scale, location);
-                    tiles.Add(tileComponent);
+                    tile.transform.localScale = Vector3.one * tileScale;
+                    tile.Construct(location);
+                    tiles.Add(tile);
                     //mapTileUpdater.Queue(tileComponent);
                 }
             }

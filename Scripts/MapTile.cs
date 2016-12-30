@@ -7,11 +7,13 @@ namespace MapViewScripts
     {
         private float scale;
         private PixelLocation location;
-        private TileLoaderCallback tileLoaderCallback = () => { };
+        private TileUpdaterCallback tileUpdaterCallback = (p) => { };
         private MapLevelContext mapLevelContext;
 
-        public TileLoaderCallback TileLoaderCallback { set { tileLoaderCallback = value; } }
+        public TileUpdaterCallback TileUpdaterCallback { set { tileUpdaterCallback = value; } }
         public MapLevelContext MapLevelContext { set { mapLevelContext = value; } }
+
+        public PixelLocation Location { get { return location; } }
 
         private void OnDestroy() //cleanup memory
         {
@@ -19,21 +21,27 @@ namespace MapViewScripts
             Destroy(GetComponent<Renderer>().sharedMaterial);
         }
 
-        private float Limit(float value)
+        private bool Limit(ref float value, out int locationDif)
         {
-            float result = value;
+            locationDif = 0;
+            bool limited = false;
             if (Mathf.Abs(value) > (1F + scale) * 0.5F)
             {
-                result = (value - 1F * Mathf.Sign(value));
+                value = (value - 1F * Mathf.Sign(value));
+                limited = true;
+                locationDif = (int)(mapLevelContext.Step * Mathf.Sign(value));
             }
-            return result;
+            return limited;
         }
 
-        public void Construct(float scale, PixelLocation location)
+        public void Construct(PixelLocation location)
         {
             this.location = location;
-            this.scale = scale;
+            scale = mapLevelContext.TileScale;
             GetComponent<Renderer>().sharedMaterial = Instantiate<Material>(GetComponent<Renderer>().sharedMaterial);
+
+            //var locationString = string.Format("Tile X = {0}, Z = {1}", location.X, location.Z);
+            //Debug.Log(locationString);
         }
 
         public void Translate(Vector3 difference)
@@ -42,12 +50,19 @@ namespace MapViewScripts
 
             var localPosition = transform.localPosition;
 
-            localPosition.x = Limit(localPosition.x);
-            localPosition.z = Limit(localPosition.z);
+            int locationDifX;
+            int locationDifZ;
 
-            if(localPosition != transform.localPosition)
+            var limitX = Limit(ref localPosition.x, out locationDifX);
+            var limitZ = Limit(ref localPosition.z, out locationDifZ);
+
+            location.X += locationDifX;
+            location.Z += locationDifZ;
+
+
+            if (limitX || limitZ)
             {
-                tileLoaderCallback();
+                tileUpdaterCallback(this);
             }
 
             transform.localPosition = localPosition;

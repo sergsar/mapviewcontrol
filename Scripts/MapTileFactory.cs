@@ -5,18 +5,18 @@ namespace MapViewScripts
 {
     public class MapTileFactory
     {
-        private System.Func<Object> instanciator;
+        private InstanciateCallback instanciateCallback;
         private MapLevelContext mapLevelContext;
 
-        public MapTileFactory(System.Func<Object> instanciator, MapLevelContext mapLevelContext)
+        public MapTileFactory(InstanciateCallback instanciateCallback, MapLevelContext mapLevelContext)
         {
-            this.instanciator = instanciator;
+            this.instanciateCallback = instanciateCallback;
             this.mapLevelContext = mapLevelContext;
         }
 
         public MapTile GetMapTile()
         {
-            var tile = (GameObject)instanciator();
+            var tile = (GameObject)instanciateCallback();
 
             var tileComponent = tile.AddComponent<MapTile>();
             tileComponent.MapLevelContext = mapLevelContext;
