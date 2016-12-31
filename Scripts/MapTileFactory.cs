@@ -7,11 +7,13 @@ namespace MapViewScripts
     {
         private InstanciateCallback instanciateCallback;
         private MapLevelContext mapLevelContext;
+        private TileUpdaterCallback tileUpdaterCallback;
 
-        public MapTileFactory(InstanciateCallback instanciateCallback, MapLevelContext mapLevelContext)
+        public MapTileFactory(InstanciateCallback instanciateCallback, MapLevelContext mapLevelContext, TileUpdaterCallback tileUpdaterCallback)
         {
             this.instanciateCallback = instanciateCallback;
             this.mapLevelContext = mapLevelContext;
+            this.tileUpdaterCallback = tileUpdaterCallback;
         }
 
         public MapTile GetMapTile()
@@ -20,6 +22,7 @@ namespace MapViewScripts
 
             var tileComponent = tile.AddComponent<MapTile>();
             tileComponent.MapLevelContext = mapLevelContext;
+            tileComponent.TileUpdaterCallback = tileUpdaterCallback;
 
             return tileComponent;
         }

@@ -8,11 +8,11 @@ namespace MapViewScripts
     public class MapLevel : MonoBehaviour
     {
         private List<MapTile> tiles = new List<MapTile>();
-        private MapTileUpdater mapTileUpdater;
+        private TileUpdaterCallback tileUpdaterCallback;
         private UnityEngine.Object tileRefObject;
         private MapContext mapContext;
 
-        public MapTileUpdater MapTileLoader { set { mapTileUpdater = value; } }
+        public TileUpdaterCallback TileUpdaterCallback { set { tileUpdaterCallback = value; } }
         public UnityEngine.Object TileRefObject { set { tileRefObject = value; } }
 
         public MapContext MapContext { set { mapContext = value; } }
@@ -32,7 +32,7 @@ namespace MapViewScripts
             Func<int, int, int> locationPlace = (center, index) => (int)(center - (levelStep + tileStep) * 0.5F + tileStep * index);
             var mapLevelContext = new MapLevelContext(zoomLevel, levelStep, tileScale);
             var instanciateCallback = new InstanciateCallback(() => Instantiate(tileRefObject));
-            var mapTileFactory = new MapTileFactory(instanciateCallback, mapLevelContext);
+            var mapTileFactory = new MapTileFactory(instanciateCallback, mapLevelContext, tileUpdaterCallback);
 
             for (var x = 0; x < cut; ++x)
             {

@@ -22,6 +22,7 @@ public class MapViewControlScript : ControlElementView<MapViewControl>
         var mapViewGameObject = Instantiate(Resources.Load<GameObject>("MapView"));
         mapViewGameObject.SetParent(gameObject);
         mapViewGameObject.transform.localPosition = ActualSize * 0.5F;
+        mapViewGameObject.transform.localScale = ActualSize;
     }
 
     private void Setup()

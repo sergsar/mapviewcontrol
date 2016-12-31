@@ -6,19 +6,19 @@ namespace MapViewScripts
     {
         private UnityEngine.Object tileRefObject;
         private MapContext mapContext;
-        private MapTileUpdater mapTileLoader;
-        public MapLevelFactory(MapContext mapContext, MapTileUpdater mapTileLoader, Object tileRefObject)
+        private TileUpdaterCallback tileUpdaterCallback;
+        public MapLevelFactory(MapContext mapContext, TileUpdaterCallback tileUpdaterCallback, Object tileRefObject)
         {
             this.tileRefObject = tileRefObject;
             this.mapContext = mapContext;
-            this.mapTileLoader = mapTileLoader;
+            this.tileUpdaterCallback = tileUpdaterCallback;
         }
 
         public MapLevel GetMapLevel()
         {
             var mapLevel = new GameObject("MapLevel").AddComponent<MapLevel>();
             mapLevel.MapContext = mapContext;
-            mapLevel.MapTileLoader = mapTileLoader;
+            mapLevel.TileUpdaterCallback = tileUpdaterCallback;
             mapLevel.TileRefObject = tileRefObject;
 
             return mapLevel;

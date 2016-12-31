@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MapViewScripts
 {
-    public class MapView : MonoBehaviour
+    public class MapView : MonoBehaviour, ICoroutineExecutor
     {
         new private Collider collider;
 
@@ -20,16 +20,20 @@ namespace MapViewScripts
 
         private void Start()
         {
-            var mapTileUpdater = new MapTileUpdater();
+            var mapContext = new MapContext(cut, tileResolution, new TileLoadingService(this));
+
+            var mapTileUpdater = new MapTileUpdater(mapContext);
+            TileUpdaterCallback tileUpdaterCallback = (p) => StartCoroutine(mapTileUpdater.UpdateTile(p));
 
             var converter = new MapPixelConverter();
             var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
-            var mapContext = new MapContext(cut, tileResolution);
-            var mapLevelFactory = new MapLevelFactory(mapContext, mapTileUpdater, tileRefObject);
+            
+            var mapLevelFactory = new MapLevelFactory(mapContext, tileUpdaterCallback, tileRefObject);
 
             var mapLevel = mapLevelFactory.GetMapLevel();
             mapLevel.gameObject.SetParent(gameObject);
             mapLevel.transform.localPosition = Vector3.zero;
+            mapLevel.transform.localScale = Vector3.one;
             mapLevel.Construct(pixelLocation, zoomLevel);
             mapLevels.Add(mapLevel);
 
