@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace MapViewScripts
 {
-    public class MapView : MonoBehaviour, ICoroutineExecutor
+    public class MapView : MonoBehaviour
     {
         new private Collider collider;
 
         private List<ITranslatable> mapLevels = new List<ITranslatable>();
-        private float mapServiceWaitTime = 0.1F;
+        private float mapServiceWaitTime = 0.3F;
         private int tileResolution = 350;
         private int cut = 3;
         private float latitude = 55.75275F;

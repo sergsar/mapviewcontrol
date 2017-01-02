@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
-
-public interface ITranslatable
+namespace MapViewScripts
 {
-    void Translate(Vector3 difference);
+    public interface ITranslatable
+    {
+        void Translate(Vector3 difference);
+    }
 }
