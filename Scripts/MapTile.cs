@@ -7,7 +7,7 @@ namespace MapViewScripts
     {
         private float scale;
         private PixelLocation location;
-        private TileUpdaterCallback tileUpdaterCallback = (p) => { };
+        private TileUpdaterCallback tileUpdaterCallback = (p) =>  null;
         private MapLevelContext mapLevelContext;
 
         public TileUpdaterCallback TileUpdaterCallback { set { tileUpdaterCallback = value; } }
@@ -36,12 +36,18 @@ namespace MapViewScripts
             return limited;
         }
 
+        private void UpdateTile()
+        {
+            StopCoroutine(tileUpdaterCallback(this));
+            StartCoroutine(tileUpdaterCallback(this));
+        }
+
         public void Construct(PixelLocation location)
         {
             this.location = location;
             scale = mapLevelContext.TileScale;
             GetComponent<Renderer>().sharedMaterial = Instantiate<Material>(GetComponent<Renderer>().sharedMaterial);
-            tileUpdaterCallback(this);
+            UpdateTile();
         }
 
         public void Translate(Vector3 difference)
@@ -62,7 +68,7 @@ namespace MapViewScripts
 
             if (limitX || limitZ)
             {
-                tileUpdaterCallback(this);
+                UpdateTile();
             }
 
             transform.localPosition = localPosition;

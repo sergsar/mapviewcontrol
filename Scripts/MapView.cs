@@ -21,12 +21,12 @@ namespace MapViewScripts
 
         private void Start()
         {
-            var loadServiceWaitCallback = new LoadServiceWaitCallback((p) => StartCoroutine(p(mapServiceWaitTime)));
+            LoadServiceWaitCallback loadServiceWaitCallback = (p) => StartCoroutine(p(mapServiceWaitTime));
             var tileLoadingService = new TileLoadingService(loadServiceWaitCallback);
             var mapContext = new MapContext(cut, tileResolution, tileLoadingService);
 
             var mapTileUpdater = new MapTileUpdater(mapContext);
-            TileUpdaterCallback tileUpdaterCallback = (p) => StartCoroutine(mapTileUpdater.UpdateTile(p));
+            TileUpdaterCallback tileUpdaterCallback = (p) => mapTileUpdater.UpdateTile(p);
 
             var converter = new MapPixelConverter();
             var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };

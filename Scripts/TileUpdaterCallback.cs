@@ -1,4 +1,5 @@
-﻿namespace MapViewScripts
+﻿using System.Collections;
+namespace MapViewScripts
 {
-    public delegate void TileUpdaterCallback(MapTile mapTile);
+    public delegate IEnumerator TileUpdaterCallback(MapTile mapTile);
 }
