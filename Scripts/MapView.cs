@@ -8,6 +8,7 @@ namespace MapViewScripts
         new private Collider collider;
 
         private List<ITranslatable> mapLevels = new List<ITranslatable>();
+        private float mapServiceWaitTime = 0.1F;
         private int tileResolution = 350;
         private int cut = 3;
         private float latitude = 55.75275F;
@@ -20,7 +21,8 @@ namespace MapViewScripts
 
         private void Start()
         {
-            var tileLoadingService = new TileLoadingService(this);
+            var loadServiceWaitCallback = new LoadServiceWaitCallback((p) => StartCoroutine(p(mapServiceWaitTime)));
+            var tileLoadingService = new TileLoadingService(loadServiceWaitCallback);
             var mapContext = new MapContext(cut, tileResolution, tileLoadingService);
 
             var mapTileUpdater = new MapTileUpdater(mapContext);

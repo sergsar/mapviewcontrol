@@ -11,21 +11,7 @@ namespace MapViewScripts
 
         public bool Processed { get { return request.isDone; } }
 
-        public MapDataLoader(string url)
-        {
-            request = new UnityWebRequest();
-            request.url = url;
-            request.redirectLimit = 4;
-            request.method = "GET";
-            request.downloadHandler = new DownloadHandlerBuffer();
-        }
-
-        public void Send()
-        {
-            request.Send();
-        }
-
-        public byte[] TakeData()
+        private byte[] TakeData()
         {
             if (request.isError)
             {
@@ -35,6 +21,21 @@ namespace MapViewScripts
 
             byte[] result = request.downloadHandler.data;
             return result;
+        }
+
+        public MapDataLoader(string url)
+        {
+            request = new UnityWebRequest();
+            request.url = url;
+            request.redirectLimit = 4;
+            request.method = "GET";
+            request.downloadHandler = new DownloadHandlerBuffer();
+        }
+
+        public IEnumerator Load()
+        {
+            yield return request.Send();
+            yield return TakeData();
         }
     }
 }

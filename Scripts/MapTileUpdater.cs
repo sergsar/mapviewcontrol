@@ -18,9 +18,9 @@ namespace MapViewScripts
             var resolution = mapContext.TileResolution;
 
             var mapRequest = new YandexMapRequest(latitude, longitude, tile.ZoomLevel, resolution);
-            var mapDataLoader = new MapDataLoader(mapRequest.GetUrl());
+            var loadingService = mapContext.MapService;
             IEnumerator result = null;
-            yield return null;//result = mapDataLoader.Load();
+            yield return result = loadingService.Load(mapRequest.GetUrl());
             var data = result.Current as byte[];
             if (tile != null && tile.gameObject && data != null)
             {
