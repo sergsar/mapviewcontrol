@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MapViewScripts
 {
-    public class MapLevel : MonoBehaviour
+    public class MapLevel : MonoBehaviour, ITranslatable
     {
         private List<MapTile> tiles = new List<MapTile>();
         private TileUpdaterCallback tileUpdaterCallback;
@@ -17,12 +17,8 @@ namespace MapViewScripts
 
         public MapContext MapContext { set { mapContext = value; } }
 
-
-        //private MapTileUpdater mapTileUpdater = new MapTileUpdater();
-
         public void Construct(PixelLocation initLocation, int zoomLevel)
         {
-            //StartCoroutine(mapTileUpdater.KeepWatch());
             var converter = new MapPixelConverter();
             var tileStep = mapContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
             var cut = mapContext.Cut;
@@ -45,7 +41,6 @@ namespace MapViewScripts
                     tile.transform.localScale = Vector3.one * tileScale;
                     tile.Construct(location);
                     tiles.Add(tile);
-                    //mapTileUpdater.Queue(tileComponent);
                 }
             }
         }

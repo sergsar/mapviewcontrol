@@ -7,9 +7,25 @@ namespace MapViewScripts
 {
     public class MapDataLoader
     {
-        private string url;
+        private UnityWebRequest request;
 
-        private byte[] TakeData(UnityWebRequest request)
+        public bool Processed { get { return request.isDone; } }
+
+        public MapDataLoader(string url)
+        {
+            request = new UnityWebRequest();
+            request.url = url;
+            request.redirectLimit = 4;
+            request.method = "GET";
+            request.downloadHandler = new DownloadHandlerBuffer();
+        }
+
+        public void Send()
+        {
+            request.Send();
+        }
+
+        public byte[] TakeData()
         {
             if (request.isError)
             {
@@ -20,23 +36,5 @@ namespace MapViewScripts
             byte[] result = request.downloadHandler.data;
             return result;
         }
-
-        public MapDataLoader(string url)
-        {
-            this.url = url;
-        }
-
-        public IEnumerator Load()
-        {
-            var request = new UnityWebRequest();
-            request.url = url;
-            request.redirectLimit = 4;
-            request.method = "GET";
-            request.downloadHandler = new DownloadHandlerBuffer();
-
-            yield return request.Send();
-            yield return TakeData(request);
-        }
-
     }
 }

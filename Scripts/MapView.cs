@@ -7,7 +7,7 @@ namespace MapViewScripts
     {
         new private Collider collider;
 
-        private List<MapLevel> mapLevels = new List<MapLevel>();
+        private List<ITranslatable> mapLevels = new List<ITranslatable>();
         private int tileResolution = 350;
         private int cut = 3;
         private float latitude = 55.75275F;
@@ -20,7 +20,8 @@ namespace MapViewScripts
 
         private void Start()
         {
-            var mapContext = new MapContext(cut, tileResolution, new TileLoadingService(this));
+            var tileLoadingService = new TileLoadingService(this);
+            var mapContext = new MapContext(cut, tileResolution, tileLoadingService);
 
             var mapTileUpdater = new MapTileUpdater(mapContext);
             TileUpdaterCallback tileUpdaterCallback = (p) => StartCoroutine(mapTileUpdater.UpdateTile(p));
@@ -28,13 +29,9 @@ namespace MapViewScripts
             var converter = new MapPixelConverter();
             var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
             
-            var mapLevelFactory = new MapLevelFactory(mapContext, tileUpdaterCallback, tileRefObject);
+            var mapLevelFactory = new MapLevelFactory(mapContext, tileUpdaterCallback, tileRefObject, gameObject);
 
-            var mapLevel = mapLevelFactory.GetMapLevel();
-            mapLevel.gameObject.SetParent(gameObject);
-            mapLevel.transform.localPosition = Vector3.zero;
-            mapLevel.transform.localScale = Vector3.one;
-            mapLevel.Construct(pixelLocation, zoomLevel);
+            var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, zoomLevel);
             mapLevels.Add(mapLevel);
 
             collider = GetComponent<Collider>();

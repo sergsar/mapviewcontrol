@@ -20,9 +20,9 @@ namespace MapViewScripts
             var mapRequest = new YandexMapRequest(latitude, longitude, tile.ZoomLevel, resolution);
             var mapDataLoader = new MapDataLoader(mapRequest.GetUrl());
             IEnumerator result = null;
-            yield return result = mapDataLoader.Load();
+            yield return null;//result = mapDataLoader.Load();
             var data = result.Current as byte[];
-            if (tile.gameObject && data != null)
+            if (tile != null && tile.gameObject && data != null)
             {
                 var applier = new MapTileApplier();
                 applier.Apply(tile.gameObject, data, resolution);
