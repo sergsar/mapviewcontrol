@@ -22,10 +22,11 @@ namespace MapViewScripts
             var converter = new MapPixelConverter();
             var tileStep = mapContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
             var cut = mapContext.Cut;
+            var startLocation = initLocation + new PixelLocation(-1, 1) * (int)(tileStep * 0.5F * (cut - 1));
             var levelStep = tileStep * cut;
             var tileScale = 1F / cut;
             Func<int, float> place = (index) => (tileScale - 1F) * 0.5F + tileScale * index;
-            Func<int, int, int> locationPlace = (center, index) => (int)(center - (levelStep + tileStep) * 0.5F + tileStep * index);
+            Func<int, int, int> locationPlace = (center, index) => (int)(center + tileStep * index);
             var mapLevelContext = new MapLevelContext(zoomLevel, levelStep, tileScale);
             var instanciateCallback = new InstanciateCallback(() => Instantiate(tileRefObject));
             var mapTileFactory = new MapTileFactory(instanciateCallback, mapLevelContext, tileUpdaterCallback);
@@ -34,7 +35,7 @@ namespace MapViewScripts
             {
                 for (var z = 0; z < cut; ++z)
                 {
-                    var location = new PixelLocation() { X = locationPlace(initLocation.X, x), Z = locationPlace(initLocation.Z, z) };
+                    var location = new PixelLocation() { X = locationPlace(startLocation.X, x), Z = locationPlace(startLocation.Z, -z) };
                     var tile = mapTileFactory.GetMapTile();
                     tile.gameObject.SetParent(gameObject);
                     tile.transform.localPosition = new Vector3(place(x), 0F, place(z));

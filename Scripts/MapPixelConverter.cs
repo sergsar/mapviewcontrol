@@ -44,7 +44,7 @@ namespace MapViewScripts
 
         public float GetZoomMultiplier(int zoomLevel)
         {
-            return (GOOGLEOFFSET / Mathf.Pow(2F, zoomLevel)) / 256F;
+            return GOOGLEOFFSET * 2F / Mathf.Pow(2F, zoomLevel) / 256F;
         }
     }
 }

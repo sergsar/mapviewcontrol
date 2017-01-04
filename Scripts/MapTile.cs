@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System;
+using System.Collections;
 
 namespace MapViewScripts
 {
@@ -9,6 +9,7 @@ namespace MapViewScripts
         private PixelLocation location;
         private TileUpdaterCallback tileUpdaterCallback = (p) =>  null;
         private MapLevelContext mapLevelContext;
+        private Coroutine previousCoroutine;
 
         public TileUpdaterCallback TileUpdaterCallback { set { tileUpdaterCallback = value; } }
         public MapLevelContext MapLevelContext { set { mapLevelContext = value; } }
@@ -38,8 +39,11 @@ namespace MapViewScripts
 
         private void UpdateTile()
         {
-            StopCoroutine(tileUpdaterCallback(this));
-            StartCoroutine(tileUpdaterCallback(this));
+            if (previousCoroutine != null)
+            {
+                StopCoroutine(previousCoroutine);
+            }
+            previousCoroutine = StartCoroutine(tileUpdaterCallback(this));
         }
 
         public void Construct(PixelLocation location)
@@ -63,7 +67,7 @@ namespace MapViewScripts
             var limitZ = Limit(ref localPosition.z, out locationDifZ);
 
             location.X += locationDifX;
-            location.Z += locationDifZ;
+            location.Z -= locationDifZ;
 
 
             if (limitX || limitZ)
