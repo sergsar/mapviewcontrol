@@ -7,33 +7,35 @@ namespace MapViewScripts
 {
     public class TileLoadingService
     {
-        private LoadServiceWaitCallback loadServiceWaitCallback;
-        private bool busy;
+        private float waitTime;
+        private IRoutineBehaviour routineBehaviour;
+        private bool locked;
 
-        public TileLoadingService(LoadServiceWaitCallback loadServiceWaitCallback)
+        public TileLoadingService(IRoutineBehaviour routineBehaviour, float waitTime)
         {
-            this.loadServiceWaitCallback = loadServiceWaitCallback;
+            this.routineBehaviour = routineBehaviour;
+            this.waitTime = waitTime;
 
         }
 
         public IEnumerator Load(string url)
         {
-            while(busy)
+            while(locked)
             {
                 yield return null;
             }
-            loadServiceWaitCallback(BusyLock);
+            routineBehaviour.StartCoroutine(WaitingLock(waitTime));
             var dataLoader = new MapDataLoader(url);
             IEnumerator result = null;
             yield return result = dataLoader.Load();
             yield return result.Current;
         }
 
-        private IEnumerator BusyLock(float delay)
+        private IEnumerator WaitingLock(float delay)
         {
-            busy = true;
+            locked = true;
             yield return new WaitForSeconds(delay);
-            busy = false;
+            locked = false;
         }
     }
 }

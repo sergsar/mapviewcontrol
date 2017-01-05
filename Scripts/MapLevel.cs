@@ -5,31 +5,30 @@ using System.Collections.Generic;
 
 namespace MapViewScripts
 {
-    public class MapLevel : MonoBehaviour, ITranslatable
+    public class MapLevel : MonoBehaviour
     {
         private List<MapTile> tiles = new List<MapTile>();
-        private TileUpdaterCallback tileUpdaterCallback;
+        private MapTileUpdater mapTileUpdater;
         private UnityEngine.Object tileRefObject;
-        private MapContext mapContext;
+        private MapViewContext mapViewContext;
 
-        public TileUpdaterCallback TileUpdaterCallback { set { tileUpdaterCallback = value; } }
+        public MapTileUpdater MapTileUpdater { set { mapTileUpdater = value; } }
         public UnityEngine.Object TileRefObject { set { tileRefObject = value; } }
 
-        public MapContext MapContext { set { mapContext = value; } }
+        public MapViewContext MapViewContext { set { mapViewContext = value; } }
 
         public void Construct(PixelLocation initLocation, int zoomLevel)
         {
             var converter = new MapPixelConverter();
-            var tileStep = mapContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
-            var cut = mapContext.Cut;
+            var tileStep = mapViewContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
+            var cut = mapViewContext.Cut;
             var startLocation = initLocation + new PixelLocation(-1, 1) * (int)(tileStep * 0.5F * (cut - 1));
             var levelStep = tileStep * cut;
             var tileScale = 1F / cut;
             Func<int, float> place = (index) => (tileScale - 1F) * 0.5F + tileScale * index;
             Func<int, int, int> locationPlace = (center, index) => (int)(center + tileStep * index);
             var mapLevelContext = new MapLevelContext(zoomLevel, levelStep, tileScale);
-            var instanciateCallback = new InstanciateCallback(() => Instantiate(tileRefObject));
-            var mapTileFactory = new MapTileFactory(instanciateCallback, mapLevelContext, tileUpdaterCallback);
+            var mapTileFactory = new MapTileFactory(tileRefObject, mapLevelContext, mapTileUpdater);
 
             for (var x = 0; x < cut; ++x)
             {
@@ -49,6 +48,11 @@ namespace MapViewScripts
         public void Translate(Vector3 difference)
         {
             tiles.ForEach(p => p.Translate(difference));
+        }
+
+        public void Scale(float delta)
+        {
+            transform.localScale += Vector3.one * delta;
         }
     }
 }

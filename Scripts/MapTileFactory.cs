@@ -5,24 +5,24 @@ namespace MapViewScripts
 {
     public class MapTileFactory
     {
-        private InstanciateCallback instanciateCallback;
         private MapLevelContext mapLevelContext;
-        private TileUpdaterCallback tileUpdaterCallback;
+        private MapTileUpdater mapTileUpdater;
+        private Object tileRefObject;
 
-        public MapTileFactory(InstanciateCallback instanciateCallback, MapLevelContext mapLevelContext, TileUpdaterCallback tileUpdaterCallback)
+        public MapTileFactory(Object tileRefObject, MapLevelContext mapLevelContext, MapTileUpdater mapTileUpdater)
         {
-            this.instanciateCallback = instanciateCallback;
+            this.tileRefObject = tileRefObject;
             this.mapLevelContext = mapLevelContext;
-            this.tileUpdaterCallback = tileUpdaterCallback;
+            this.mapTileUpdater = mapTileUpdater;
         }
 
         public MapTile GetMapTile()
         {
-            var tile = (GameObject)instanciateCallback();
+            var tile = (GameObject)MonoBehaviour.Instantiate(tileRefObject);
 
             var tileComponent = tile.AddComponent<MapTile>();
             tileComponent.MapLevelContext = mapLevelContext;
-            tileComponent.TileUpdaterCallback = tileUpdaterCallback;
+            tileComponent.MapTileUpdater = mapTileUpdater;
 
             return tileComponent;
         }

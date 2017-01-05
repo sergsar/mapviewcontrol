@@ -7,11 +7,11 @@ namespace MapViewScripts
     {
         private float scale;
         private PixelLocation location;
-        private TileUpdaterCallback tileUpdaterCallback = (p) =>  null;
+        private MapTileUpdater mapTileUpdater;
         private MapLevelContext mapLevelContext;
         private Coroutine previousCoroutine;
 
-        public TileUpdaterCallback TileUpdaterCallback { set { tileUpdaterCallback = value; } }
+        public MapTileUpdater MapTileUpdater { set { mapTileUpdater = value; } }
         public MapLevelContext MapLevelContext { set { mapLevelContext = value; } }
 
         public PixelLocation Location { get { return location; } }
@@ -43,7 +43,7 @@ namespace MapViewScripts
             {
                 StopCoroutine(previousCoroutine);
             }
-            previousCoroutine = StartCoroutine(tileUpdaterCallback(this));
+            previousCoroutine = StartCoroutine(mapTileUpdater.UpdateTile(this));
         }
 
         public void Construct(PixelLocation location)

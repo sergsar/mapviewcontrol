@@ -3,9 +3,9 @@ namespace MapViewScripts
 {
     public class MapTileUpdater
     {
-        private MapContext mapContext;
+        private MapViewContext mapContext;
 
-        public MapTileUpdater(MapContext mapContext)
+        public MapTileUpdater(MapViewContext mapContext)
         {
             this.mapContext = mapContext;
         }

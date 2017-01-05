@@ -5,22 +5,22 @@ namespace MapViewScripts
     public class MapLevelFactory
     {
         private UnityEngine.Object tileRefObject;
-        private MapContext mapContext;
-        private TileUpdaterCallback tileUpdaterCallback;
+        private MapViewContext mapViewContext;
+        private MapTileUpdater mapTileUpdater;
         private GameObject parent;
-        public MapLevelFactory(MapContext mapContext, TileUpdaterCallback tileUpdaterCallback, Object tileRefObject, GameObject parent)
+        public MapLevelFactory(MapViewContext mapViewContext, MapTileUpdater mapTileUpdater, Object tileRefObject, GameObject parent)
         {
             this.tileRefObject = tileRefObject;
-            this.mapContext = mapContext;
-            this.tileUpdaterCallback = tileUpdaterCallback;
+            this.mapViewContext = mapViewContext;
+            this.mapTileUpdater = mapTileUpdater;
             this.parent = parent;
         }
 
-        public ITranslatable GetMapLevel(PixelLocation pixelLocation, int zoomLevel)
+        public MapLevel GetMapLevel(PixelLocation pixelLocation, int zoomLevel)
         {
             var mapLevel = new GameObject("MapLevel").AddComponent<MapLevel>();
-            mapLevel.MapContext = mapContext;
-            mapLevel.TileUpdaterCallback = tileUpdaterCallback;
+            mapLevel.MapViewContext = mapViewContext;
+            mapLevel.MapTileUpdater = mapTileUpdater;
             mapLevel.TileRefObject = tileRefObject;
 
             mapLevel.gameObject.SetParent(parent);

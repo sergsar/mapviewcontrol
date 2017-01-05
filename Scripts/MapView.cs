@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace MapViewScripts
 {
-    public class MapView : MonoBehaviour
+    public class MapView : MonoBehaviour, IRoutineBehaviour
     {
         new private Collider collider;
 
-        private List<ITranslatable> mapLevels = new List<ITranslatable>();
+        private List<MapLevel> mapLevels = new List<MapLevel>();
         private float mapServiceWaitTime = 0.3F;
         private int tileResolution = 350;
         private int cut = 3;
@@ -21,28 +21,29 @@ namespace MapViewScripts
 
         private void Start()
         {
-            LoadServiceWaitCallback loadServiceWaitCallback = (p) => StartCoroutine(p(mapServiceWaitTime));
-            var tileLoadingService = new TileLoadingService(loadServiceWaitCallback);
-            var mapContext = new MapContext(cut, tileResolution, tileLoadingService);
+            var tileLoadingService = new TileLoadingService(this, mapServiceWaitTime);
+            var mapViewContext = new MapViewContext(cut, tileResolution, tileLoadingService);
 
-            var mapTileUpdater = new MapTileUpdater(mapContext);
-            TileUpdaterCallback tileUpdaterCallback = (p) => mapTileUpdater.UpdateTile(p);
+            var mapTileUpdater = new MapTileUpdater(mapViewContext);
 
             var converter = new MapPixelConverter();
             var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
             
-            var mapLevelFactory = new MapLevelFactory(mapContext, tileUpdaterCallback, tileRefObject, gameObject);
+            var mapLevelFactory = new MapLevelFactory(mapViewContext, mapTileUpdater, tileRefObject, gameObject);
+            var mapLevelSpowner = new MapLevelSpowner();
 
             var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, zoomLevel);
             mapLevels.Add(mapLevel);
 
             collider = GetComponent<Collider>();
             InputMaster.Instance.AddPointDragEventHandler(collider, OnPointerDrag);
+            InputMaster.Instance.AddWheelScrollEventHandler(collider, OnScrollWheel);
         }
 
         private void OnDestroy()
         {
             InputMaster.Instance.RemovePointDragHandler(collider);
+            InputMaster.Instance.RemoveWheelScrollEventHandler(collider);
         }
 
         private void OnPointerDrag(Collider collider, InputMaster.PointerDragArgs args)
@@ -71,6 +72,11 @@ namespace MapViewScripts
             //Debug.LogFormat("hitPoint1 {0}, hitPoint2 {1}, difference {2}", hitPoint1, hitPoint2, difference);
 
             mapLevels.ForEach(p => p.Translate(difference));
+        }
+
+        private void OnScrollWheel(Collider collider, InputMaster.WheelScrollArgs args)
+        {
+            mapLevels.ForEach(p => p.Scale(args.WheelDelta));
         }
     }
 }
