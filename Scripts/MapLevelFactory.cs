@@ -7,13 +7,11 @@ namespace MapViewScripts
         private UnityEngine.Object tileRefObject;
         private MapViewContext mapViewContext;
         private MapTileUpdater mapTileUpdater;
-        private GameObject parent;
-        public MapLevelFactory(MapViewContext mapViewContext, MapTileUpdater mapTileUpdater, Object tileRefObject, GameObject parent)
+        public MapLevelFactory(MapViewContext mapViewContext, MapTileUpdater mapTileUpdater, Object tileRefObject)
         {
             this.tileRefObject = tileRefObject;
             this.mapViewContext = mapViewContext;
             this.mapTileUpdater = mapTileUpdater;
-            this.parent = parent;
         }
 
         public MapLevel GetMapLevel(PixelLocation pixelLocation, int zoomLevel)
@@ -23,11 +21,8 @@ namespace MapViewScripts
             mapLevel.MapTileUpdater = mapTileUpdater;
             mapLevel.TileRefObject = tileRefObject;
 
-            mapLevel.gameObject.SetParent(parent);
-            mapLevel.transform.localPosition = Vector3.zero;
-            mapLevel.transform.localScale = Vector3.one;
-
-            mapLevel.Construct(pixelLocation, zoomLevel);
+            mapLevel.Init(pixelLocation, zoomLevel);
+            mapLevel.Construct();
 
             return mapLevel;
         }

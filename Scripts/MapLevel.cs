@@ -11,13 +11,24 @@ namespace MapViewScripts
         private MapTileUpdater mapTileUpdater;
         private UnityEngine.Object tileRefObject;
         private MapViewContext mapViewContext;
+        private PixelLocation initLocation;
+        private int zoomLevel;
+        private float scaleFactor = 1F;
 
         public MapTileUpdater MapTileUpdater { set { mapTileUpdater = value; } }
         public UnityEngine.Object TileRefObject { set { tileRefObject = value; } }
 
         public MapViewContext MapViewContext { set { mapViewContext = value; } }
+        public int ZoomLevel { get { return zoomLevel; } }
 
-        public void Construct(PixelLocation initLocation, int zoomLevel)
+        public void Init(PixelLocation initLocation, int zoomLevel)
+        {
+            this.initLocation = initLocation;
+            this.zoomLevel = zoomLevel;
+        }
+
+
+        public void Construct()
         {
             var converter = new MapPixelConverter();
             var tileStep = mapViewContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
@@ -52,7 +63,12 @@ namespace MapViewScripts
 
         public void Scale(float delta)
         {
-            transform.localScale += Vector3.one * delta;
+            transform.localScale = Vector3.one * scaleFactor * (delta + 1);
+        }
+
+        public void UpdateScaleFactor(int pow)
+        {
+            scaleFactor = Mathf.Pow(scaleFactor, pow);
         }
     }
 }

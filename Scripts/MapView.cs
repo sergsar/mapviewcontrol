@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace MapViewScripts
@@ -7,6 +8,7 @@ namespace MapViewScripts
     {
         new private Collider collider;
 
+        private MapLevelFactory mapLevelFactory;
         private List<MapLevel> mapLevels = new List<MapLevel>();
         private float mapServiceWaitTime = 0.3F;
         private int tileResolution = 350;
@@ -14,26 +16,33 @@ namespace MapViewScripts
         private float latitude = 55.75275F;
         private float longitude = 37.62074F;
         private MapLocation mapLocation = new MapLocation() { Longitude = 37.62074F, Latitude = 55.75275F };
-        private int zoomLevel = 11;
+        private int initialZoomLevel = 11;
+        private int zoomLevel;
+        private float zoomLevelFloat;
+        private MapPixelConverter converter = new MapPixelConverter();
 
         [SerializeField]
         private Object tileRefObject;
 
         private void Start()
         {
+            zoomLevelFloat = zoomLevel = initialZoomLevel;
+
             var tileLoadingService = new TileLoadingService(this, mapServiceWaitTime);
             var mapViewContext = new MapViewContext(cut, tileResolution, tileLoadingService);
 
             var mapTileUpdater = new MapTileUpdater(mapViewContext);
 
-            var converter = new MapPixelConverter();
             var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
             
-            var mapLevelFactory = new MapLevelFactory(mapViewContext, mapTileUpdater, tileRefObject, gameObject);
-            var mapLevelSpowner = new MapLevelSpowner();
+            mapLevelFactory = new MapLevelFactory(mapViewContext, mapTileUpdater, tileRefObject);
 
             var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, zoomLevel);
             mapLevels.Add(mapLevel);
+
+            mapLevel.gameObject.SetParent(gameObject);
+            mapLevel.transform.localPosition = Vector3.zero;
+            mapLevel.transform.localScale = Vector3.one;
 
             collider = GetComponent<Collider>();
             InputMaster.Instance.AddPointDragEventHandler(collider, OnPointerDrag);
@@ -76,7 +85,38 @@ namespace MapViewScripts
 
         private void OnScrollWheel(Collider collider, InputMaster.WheelScrollArgs args)
         {
-            mapLevels.ForEach(p => p.Scale(args.WheelDelta));
+            var wheelDelta = args.WheelDelta;
+            zoomLevelFloat += wheelDelta;
+            var intZoomLevelDelta = (int)zoomLevelFloat;
+            if (intZoomLevelDelta != zoomLevel)
+            {
+                //var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
+                //var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, intZoomLevelDelta);
+                //mapLevel.gameObject.SetParent(gameObject);
+                //mapLevel.transform.localPosition = Vector3.zero;
+                //var destroyLevels = new List<MapLevel>();
+                //if (intZoomLevelDelta < zoomLevel)
+                //{
+                //    mapLevel.transform.localScale = Vector3.one * 2F;
+                //    destroyLevels = mapLevels.Where(p => p.ZoomLevel > zoomLevel).ToList();
+                //    //zoomLevelDelta -= 0.5F;
+                //}
+                //else
+                //{
+                //    mapLevel.transform.localScale = Vector3.one * 0.5F;
+                //    destroyLevels = mapLevels.Where(p => p.ZoomLevel < zoomLevel).ToList();
+                //    zoomLevelDelta -= 0.5F;
+                //}
+                //mapLevels.Add(mapLevel);
+
+                //mapLevels.RemoveAll(p => destroyLevels.Contains(p));
+                //destroyLevels.ForEach(p => Destroy(p.gameObject));
+
+                Debug.LogFormat("intZoomLevelDelta {0} : zoomLevel {1} : zoomLevelDelta {2}", intZoomLevelDelta, zoomLevel, zoomLevelFloat);
+            }
+            zoomLevel = intZoomLevelDelta;
+
+            mapLevels.ForEach(p => p.Scale(zoomLevelFloat % 1F));
         }
     }
 }
