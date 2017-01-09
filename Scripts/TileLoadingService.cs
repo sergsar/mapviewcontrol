@@ -25,7 +25,6 @@ namespace MapViewScripts
                 yield return null;
             }
             routineBehaviour.StartCoroutine(WaitingLock(waitTime));
-            Debug.Log(url);
             var dataLoader = new MapDataLoader(url);
             IEnumerator result = null;
             yield return result = dataLoader.Load();

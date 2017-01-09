@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace MapViewScripts
@@ -8,7 +7,7 @@ namespace MapViewScripts
     {
         new private Collider collider;
 
-        private MapLevelSpowner mapLevelSpowner;
+        private List<MapLevel> mapLevels = new List<MapLevel>();
         private float mapServiceWaitTime = 0.3F;
         private int tileResolution = 350;
         private int cut = 3;
@@ -31,10 +30,10 @@ namespace MapViewScripts
             var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
             
             var mapLevelFactory = new MapLevelFactory(mapViewContext, mapTileUpdater, tileRefObject, gameObject);
-            mapLevelSpowner = new MapLevelSpowner(mapLevelFactory);
-            mapLevelSpowner.SpownMapLevel(pixelLocation, zoomLevel);
+            var mapLevelSpowner = new MapLevelSpowner();
 
-            
+            var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, zoomLevel);
+            mapLevels.Add(mapLevel);
 
             collider = GetComponent<Collider>();
             InputMaster.Instance.AddPointDragEventHandler(collider, OnPointerDrag);
@@ -72,12 +71,12 @@ namespace MapViewScripts
 
             //Debug.LogFormat("hitPoint1 {0}, hitPoint2 {1}, difference {2}", hitPoint1, hitPoint2, difference);
 
-            mapLevelSpowner.ForEach(p => p.Translate(difference));
+            mapLevels.ForEach(p => p.Translate(difference));
         }
 
         private void OnScrollWheel(Collider collider, InputMaster.WheelScrollArgs args)
         {
-            mapLevelSpowner.ForEach(p => p.Scale(args.WheelDelta));
+            mapLevels.ForEach(p => p.Scale(args.WheelDelta));
         }
     }
 }
