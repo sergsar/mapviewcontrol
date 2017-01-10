@@ -66,9 +66,9 @@ namespace MapViewScripts
             transform.localScale = Vector3.one * scaleFactor * (delta + 1);
         }
 
-        public void UpdateScaleFactor(int pow)
+        public void UpdateScaleFactor(float pow)
         {
-            scaleFactor = Mathf.Pow(scaleFactor, pow);
+            scaleFactor *= Mathf.Pow(2F, pow);
         }
     }
 }

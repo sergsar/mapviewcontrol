@@ -90,29 +90,41 @@ namespace MapViewScripts
             var intZoomLevelDelta = (int)zoomLevelFloat;
             if (intZoomLevelDelta != zoomLevel)
             {
-                //var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
-                //var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, intZoomLevelDelta);
-                //mapLevel.gameObject.SetParent(gameObject);
-                //mapLevel.transform.localPosition = Vector3.zero;
-                //var destroyLevels = new List<MapLevel>();
-                //if (intZoomLevelDelta < zoomLevel)
-                //{
-                //    mapLevel.transform.localScale = Vector3.one * 2F;
-                //    destroyLevels = mapLevels.Where(p => p.ZoomLevel > zoomLevel).ToList();
-                //    //zoomLevelDelta -= 0.5F;
-                //}
-                //else
-                //{
-                //    mapLevel.transform.localScale = Vector3.one * 0.5F;
-                //    destroyLevels = mapLevels.Where(p => p.ZoomLevel < zoomLevel).ToList();
-                //    zoomLevelDelta -= 0.5F;
-                //}
-                //mapLevels.Add(mapLevel);
+                var destroyLevels = new List<MapLevel>();
+                var factorUpdatePow = 0F;
+                if(intZoomLevelDelta < zoomLevel)
+                {
+                    destroyLevels = mapLevels.Where(p => p.ZoomLevel > zoomLevel).ToList();
+                    factorUpdatePow = -1F;
+                }
+                else
+                {
+                    destroyLevels = mapLevels.Where(p => p.ZoomLevel < zoomLevel).ToList();
+                    factorUpdatePow = 1F;
+                }
+                mapLevels.RemoveAll(p => destroyLevels.Contains(p));
+                destroyLevels.ForEach(p => Destroy(p.gameObject));
+                mapLevels.ForEach(p => p.UpdateScaleFactor(factorUpdatePow));
 
-                //mapLevels.RemoveAll(p => destroyLevels.Contains(p));
-                //destroyLevels.ForEach(p => Destroy(p.gameObject));
+                if (!mapLevels.Any(p => p.ZoomLevel == intZoomLevelDelta))
+                {
+                    var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
+                    var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, intZoomLevelDelta);
+                    mapLevel.gameObject.SetParent(gameObject);
+                    mapLevel.transform.localPosition = Vector3.zero;
+                    if (intZoomLevelDelta < zoomLevel)
+                    {
+                        mapLevel.transform.localScale = Vector3.one * 2F;
+                    }
+                    else
+                    {
+                        mapLevel.transform.localScale = Vector3.one * 0.5F;
+                    }
 
-                Debug.LogFormat("intZoomLevelDelta {0} : zoomLevel {1} : zoomLevelDelta {2}", intZoomLevelDelta, zoomLevel, zoomLevelFloat);
+                    mapLevels.Add(mapLevel);
+                }
+
+                //Debug.LogFormat("intZoomLevelDelta {0} : zoomLevel {1} : zoomLevelDelta {2}", intZoomLevelDelta, zoomLevel, zoomLevelFloat);
             }
             zoomLevel = intZoomLevelDelta;
 
