@@ -20,6 +20,7 @@ namespace MapViewScripts
 
         public IEnumerator Load(string url)
         {
+            //Debug.Log(url);
             while(locked)
             {
                 yield return null;
