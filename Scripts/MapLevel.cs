@@ -13,6 +13,7 @@ namespace MapViewScripts
         private MapViewContext mapViewContext;
         private PixelLocation initLocation;
         private int zoomLevel;
+        private MapPixelConverter converter = new MapPixelConverter();
         private float scaleFactor = 1F;
 
         public MapTileUpdater MapTileUpdater { set { mapTileUpdater = value; } }
@@ -30,7 +31,6 @@ namespace MapViewScripts
 
         public void Construct()
         {
-            var converter = new MapPixelConverter();
             var tileStep = mapViewContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
             var cut = mapViewContext.Cut;
             var startLocation = initLocation + new PixelLocation(-1, 1) * (int)(tileStep * 0.5F * (cut - 1));

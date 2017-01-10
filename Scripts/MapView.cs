@@ -8,15 +8,16 @@ namespace MapViewScripts
     {
         new private Collider collider;
 
+        private readonly float mapServiceWaitTime = 0.3F;
+        private readonly int tileResolution = 350;
+        private readonly int cut = 3;
+        private readonly float latitude = 55.75275F;
+        private readonly float longitude = 37.62074F;
+        private readonly int initialZoomLevel = 11;
+
         private MapLevelFactory mapLevelFactory;
         private List<MapLevel> mapLevels = new List<MapLevel>();
-        private float mapServiceWaitTime = 0.3F;
-        private int tileResolution = 350;
-        private int cut = 3;
-        private float latitude = 55.75275F;
-        private float longitude = 37.62074F;
-        private MapLocation mapLocation = new MapLocation() { Longitude = 37.62074F, Latitude = 55.75275F };
-        private int initialZoomLevel = 11;
+        //private MapLocation mapLocation = new MapLocation() { Longitude = 37.62074F, Latitude = 55.75275F };
         private int zoomLevel;
         private float zoomLevelFloat;
         private MapPixelConverter converter = new MapPixelConverter();
@@ -48,6 +49,14 @@ namespace MapViewScripts
             InputMaster.Instance.AddPointDragEventHandler(collider, OnPointerDrag);
             InputMaster.Instance.AddWheelScrollEventHandler(collider, OnScrollWheel);
         }
+
+        //private void Update()
+        //{
+        //    if(Input.GetKeyDown(KeyCode.I))
+        //    {
+        //        Debug.Log(zoomLevelFloat);
+        //    }
+        //}
 
         private void OnDestroy()
         {
