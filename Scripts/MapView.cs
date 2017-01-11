@@ -20,6 +20,7 @@ namespace MapViewScripts
         //private MapLocation mapLocation = new MapLocation() { Longitude = 37.62074F, Latitude = 55.75275F };
         private int zoomLevel;
         private float zoomLevelFloat;
+        private Vector3 pixelDelta;
         private MapPixelConverter converter = new MapPixelConverter();
 
         [SerializeField]
@@ -50,13 +51,14 @@ namespace MapViewScripts
             InputMaster.Instance.AddWheelScrollEventHandler(collider, OnScrollWheel);
         }
 
-        //private void Update()
-        //{
-        //    if(Input.GetKeyDown(KeyCode.I))
-        //    {
-        //        Debug.Log(zoomLevelFloat);
-        //    }
-        //}
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                Debug.Log(pixelDelta);
+                Debug.Log(tileResolution * converter.GetZoomMultiplier(zoomLevel));
+            }
+        }
 
         private void OnDestroy()
         {
@@ -90,6 +92,10 @@ namespace MapViewScripts
             //Debug.LogFormat("hitPoint1 {0}, hitPoint2 {1}, difference {2}", hitPoint1, hitPoint2, difference);
 
             mapLevels.ForEach(p => p.Translate(difference));
+
+            var localDifference = transform.InverseTransformVector(difference);
+            var pixelDifference = localDifference * (tileResolution * cut * converter.GetZoomMultiplier(zoomLevel) / ((zoomLevelFloat % 1) + 1));
+            pixelDelta += pixelDifference;
         }
 
         private void OnScrollWheel(Collider collider, InputMaster.WheelScrollArgs args)
@@ -118,7 +124,7 @@ namespace MapViewScripts
                 if (!mapLevels.Any(p => p.ZoomLevel == intZoomLevelDelta))
                 {
                     var pixelLocation = new PixelLocation() { X = converter.LonToX(longitude), Z = converter.LatToZ(latitude) };
-                    var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, intZoomLevelDelta);
+                    var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation + new PixelLocation((int)-pixelDelta.x, (int)pixelDelta.z), intZoomLevelDelta);
                     mapLevel.gameObject.SetParent(gameObject);
                     mapLevel.transform.localPosition = Vector3.zero;
                     if (intZoomLevelDelta < zoomLevel)
