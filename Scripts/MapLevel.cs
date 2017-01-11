@@ -33,11 +33,11 @@ namespace MapViewScripts
         {
             var tileStep = mapViewContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
             var cut = mapViewContext.Cut;
-            var startLocation = initLocation + new PixelLocation(-1, 1) * (int)(tileStep * 0.5F * (cut - 1));
+            var startLocation = initLocation + new PixelLocation(-1, 1) * (tileStep / 2 * (cut - 1));
             var levelStep = tileStep * cut;
             var tileScale = 1F / cut;
             Func<int, float> place = (index) => (tileScale - 1F) * 0.5F + tileScale * index;
-            Func<int, int, int> locationPlace = (center, index) => (int)(center + tileStep * index);
+            Func<int, int, int> locationPlace = (center, index) => center + tileStep * index;
             var mapLevelContext = new MapLevelContext(zoomLevel, levelStep, tileScale);
             var mapTileFactory = new MapTileFactory(tileRefObject, mapLevelContext, mapTileUpdater);
 

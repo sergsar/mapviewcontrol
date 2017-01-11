@@ -42,9 +42,14 @@ namespace MapViewScripts
             return ZToLat(LatToZ(lat) + (delta << (21 - zoom)));
         }
 
-        public float GetZoomMultiplier(int zoomLevel)
+        public int GetZoomMultiplier(int zoom)
         {
-            return GOOGLEOFFSET * 2F / Mathf.Pow(2F, zoomLevel) / 256F;
+            return 1 << (21 - zoom);
         }
+
+        //public float GetZoomMultiplierFloat(float zoom)
+        //{
+        //    return Mathf.Pow(2F, 21F - zoom);
+        //}
     }
 }
