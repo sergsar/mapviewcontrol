@@ -5,7 +5,7 @@ namespace MapViewScripts
 {
     public class MapLevelSpowner
     {
-        public MapLevelSpowner()
+        public MapLevelSpowner(MapLevelFactory mapLevelFactory)
         {
 
         }

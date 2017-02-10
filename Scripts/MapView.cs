@@ -39,6 +39,8 @@ namespace MapViewScripts
             
             mapLevelFactory = new MapLevelFactory(mapViewContext, mapTileUpdater, tileRefObject);
 
+            //var mapLevelSpowner = new MapLevelSpowner(mapLevelFactory);
+
             var mapLevel = mapLevelFactory.GetMapLevel(pixelLocation, zoomLevel);
             mapLevels.Add(mapLevel);
 
