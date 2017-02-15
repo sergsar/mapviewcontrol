@@ -95,8 +95,8 @@ namespace MapViewScripts
 
             mapLevels.ForEach(p => p.Translate(difference));
 
-            var localDifference = transform.InverseTransformVector(difference);
-            var pixelDifference = localDifference * (tileResolution * cut * converter.GetZoomMultiplier(zoomLevel) / ((zoomLevelFloat % 1) + 1));
+            var localDifference = transform.InverseTransformVector(difference) / ((zoomLevelFloat % 1) + 1);
+            var pixelDifference = localDifference * tileResolution * cut * converter.GetZoomMultiplier(zoomLevel);
             pixelDelta += pixelDifference;
         }
 
