@@ -142,8 +142,8 @@ namespace MapViewScripts
                 }
 
                 //Debug.LogFormat("intZoomLevelDelta {0} : zoomLevel {1} : zoomLevelDelta {2}", intZoomLevelDelta, zoomLevel, zoomLevelFloat);
+                zoomLevel = intZoomLevelDelta;
             }
-            zoomLevel = intZoomLevelDelta;
 
             mapLevels.ForEach(p => p.Scale(zoomLevelFloat % 1F));
         }
