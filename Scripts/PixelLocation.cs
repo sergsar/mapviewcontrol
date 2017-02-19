@@ -26,5 +26,10 @@
         {
             return new PixelLocation(a.X * d, a.Z * d);
         }
+
+        public override string ToString()
+        {
+            return string.Format("({0}, {1})", X, Z);
+        }
     }
 }
