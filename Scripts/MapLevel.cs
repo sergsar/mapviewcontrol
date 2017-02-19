@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace MapViewScripts
@@ -69,6 +69,24 @@ namespace MapViewScripts
         public void UpdateScaleFactor(float pow)
         {
             scaleFactor *= Mathf.Pow(2F, pow);
+        }
+
+        public PixelLocation GetCenterLocation()
+        {
+            var tile = tiles.FirstOrDefault();
+            if(!tile)
+            {
+                return null;
+            }
+
+            var localPosition = tile.transform.localPosition;
+            var tileShift = localPosition * mapViewContext.Cut;
+            Debug.Log(tileShift);
+            var tileResolution = mapViewContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
+            var pixelShift = new PixelLocation((int)(tileShift.x * tileResolution), -(int)(tileShift.z * tileResolution));
+            var centerLocation = tile.Location - pixelShift;
+
+            return centerLocation;
         }
     }
 }
