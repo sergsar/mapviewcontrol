@@ -81,7 +81,6 @@ namespace MapViewScripts
 
             var localPosition = tile.transform.localPosition;
             var tileShift = localPosition * mapViewContext.Cut;
-            Debug.Log(tileShift);
             var tileResolution = mapViewContext.TileResolution * converter.GetZoomMultiplier(zoomLevel);
             var pixelShift = new PixelLocation((int)(tileShift.x * tileResolution), -(int)(tileShift.z * tileResolution));
             var centerLocation = tile.Location - pixelShift;
